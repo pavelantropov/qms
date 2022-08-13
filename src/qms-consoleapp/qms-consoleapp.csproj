@@ -4,7 +4,6 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace>pavelantropov.qms_consoleapp</RootNamespace>
-		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 </Project>
