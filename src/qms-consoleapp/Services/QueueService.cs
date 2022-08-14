@@ -20,14 +20,14 @@ public class QueueService : IQueueService
 		_queueCounter = new Dictionary<ServiceType, int>();
 	}
 
-	public void GiveTicket(ServiceType serviceType)
+	public void GiveTicket(Visitor visitor)
 	{
-		_queueCounter.TryAdd(serviceType, 0);
+		_queueCounter.TryAdd(visitor.ServiceType, 0);
 		int windowNumber;
 
 		try
 		{
-			windowNumber = AssignWindow(serviceType);
+			windowNumber = AssignWindow(visitor);
 		}
 		catch (ArgumentOutOfRangeException e)
 		{
@@ -35,21 +35,21 @@ public class QueueService : IQueueService
 			return;
 		}
 
-		_outputHelper.Print($"{serviceType.Name}{++_queueCounter[serviceType]} - window#{windowNumber}");
+		_outputHelper.Print($"{visitor.ServiceType.Name}{++_queueCounter[visitor.ServiceType]} - window#{windowNumber}");
 	}
 
-	private int AssignWindow(ServiceType serviceType)
+	private int AssignWindow(Visitor visitor)
 	{
-		var availableWindows = _windowService.GetAll().Where(x => x.MinutesLeft >= serviceType.MinutesRequired).ToList();
+		var availableWindows = _windowService.GetAllAvailableForVisitor(visitor);
 		if (!availableWindows.Any())
 		{
-			throw new ArgumentOutOfRangeException(nameof(serviceType), $"No windows left for providing the \"{serviceType.Name}\" service today.");
+			throw new ArgumentOutOfRangeException(nameof(visitor), $"No windows left for providing the \"{visitor.ServiceType.Name}\" service today.");
 		}
 
 		var freeWindowIndex = availableWindows.FindIndex(x => 
 			x.MinutesLeft == availableWindows.Max(y => y.MinutesLeft));
 
-		availableWindows[freeWindowIndex].MinutesLeft -= serviceType.MinutesRequired;
+		availableWindows[freeWindowIndex].CurrentVisitor = visitor;
 
 		return availableWindows[freeWindowIndex].Id;
 	}

@@ -1,4 +1,6 @@
-﻿namespace pavelantropov.qms_consoleapp.Entities;
+﻿using System;
+
+namespace pavelantropov.qms_consoleapp.Entities;
 
 public class ServiceType
 {
@@ -8,6 +10,7 @@ public class ServiceType
 		MinutesRequired = minutesRequired;
 	}
 
+	public Guid Id { get; } = Guid.NewGuid();
 	public string Name { get; set; }
 	public int MinutesRequired { get; set; }
 }

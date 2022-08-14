@@ -4,5 +4,5 @@ namespace pavelantropov.qms_consoleapp.Services;
 
 public interface IQueueService
 {
-	void GiveTicket(ServiceType serviceType);
+	void GiveTicket(Visitor visitor);
 }

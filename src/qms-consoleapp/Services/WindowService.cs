@@ -21,16 +21,17 @@ public class WindowService : IWindowService
 
 	public Window Get(int id) => _repository.Items.Find(x => x.Id == id);
 
-	public List<Window> GetAll()
-	{
-		return new List<Window>(_repository.Items);
-	}
+	public List<Window> GetAll() => new (_repository.Items);
+
+	public List<Window> GetAllAvailableForVisitor(Visitor visitor) => 
+		_repository.Items.Where(x => x.MinutesLeft >= visitor.ServiceType.MinutesRequired).ToList();
 
 	public Window Create(int workDayMinutes, List<ServiceType> supportedServiceTypes)
 	{
 		var newId = _repository.Items.Any() ? _repository.Items.Max(x => x.Id) + 1 : 1;
 		var newWindow = new Window(workDayMinutes, supportedServiceTypes) { Id = newId };
 		newWindow.TimeLeftEvent += OnTimeLeft;
+		newWindow.WindowAvailableEvent += OnWindowAvailable;
 		_repository.Items.Add(newWindow);
 		return newWindow;
 	}
@@ -48,5 +49,9 @@ public class WindowService : IWindowService
 	private void OnTimeLeft(string message)
 	{
 		_outputHelper.Print(message);
+	}
+	private void OnWindowAvailable(int id)
+	{
+		_outputHelper.Print($"Window {id} is available.");
 	}
 }

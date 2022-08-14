@@ -8,7 +8,9 @@ public class Window
 {
 	private List<ServiceType> _supportedServiceTypes;
 	private bool _isOpen;
+	private bool _isAvailable;
 	private int _minutesLeft;
+	private Visitor _currentVisitor;
 
 	public Window(int workDayMinutes,
 		List<ServiceType> supportedServiceTypes)
@@ -27,7 +29,7 @@ public class Window
 	public int MinutesLeft
 	{
 		get => _minutesLeft;
-		set
+		private set
 		{
 			if (WorkDayMinutes - MinutesLeft <= WorkDayMinutes * 0.75
 			    && WorkDayMinutes - value > WorkDayMinutes * 0.75)
@@ -61,7 +63,33 @@ public class Window
 		set => _isOpen = value;
 	}
 
+	public bool IsAvailable
+	{
+		get => _isAvailable && IsOpen;
+		set => _isAvailable = value;
+	}
+
+	public Visitor CurrentVisitor
+	{
+		get => _currentVisitor;
+		set
+		{
+			IsAvailable = false;
+			_currentVisitor = value;
+			MinutesLeft -= CurrentVisitor.ServiceType.MinutesRequired;
+			CurrentVisitor.VisitorLeftEvent += OnVisitorLeft;
+			CurrentVisitor.MinutesLeft = 0;
+		}
+	}
+
 	public event Action<string> TimeLeftEvent;
+	public event Action<int> WindowAvailableEvent;
 
 	public void ResetDay() => MinutesLeft = WorkDayMinutes;
+
+	public void OnVisitorLeft()
+	{
+		IsAvailable = true;
+		WindowAvailableEvent?.Invoke(Id);
+	}
 }

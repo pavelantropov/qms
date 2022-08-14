@@ -8,6 +8,7 @@ public interface IWindowService
 {
 	Window Get(int id);
 	List<Window> GetAll();
+	List<Window> GetAllAvailableForVisitor(Visitor visitor);
 
 	Window Create(int workDayMinutes,
 		List<ServiceType> supportedServiceTypes);

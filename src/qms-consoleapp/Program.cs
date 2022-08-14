@@ -25,6 +25,7 @@ var queueService = new QueueService(windowService);
 while (windowService.GetAll().Any(x => x.IsOpen))
 {
 	var serviceType = serviceTypes.ElementAt(new Random().Next(0, serviceTypes.Count));
+	var visitor = new Visitor("Test", serviceType);
 
-	queueService.GiveTicket(serviceType);
+	queueService.GiveTicket(visitor);
 }
