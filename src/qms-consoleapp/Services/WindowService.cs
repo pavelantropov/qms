@@ -23,7 +23,8 @@ public class WindowService : IWindowService
 	public List<Window> GetAll() => new (_repository.Items);
 
 	public List<Window> GetAllAvailableForVisitor(Visitor visitor) => 
-		_repository.Items.Where(x => x.MinutesLeft >= visitor.ServiceType.MinutesRequired).ToList();
+		_repository.Items.Where(x => x.SupportedServiceTypes.Contains(visitor.ServiceType) 
+		                             && x.MinutesLeft >= visitor.ServiceType.MinutesRequired).ToList();
 
 	public Window Create(int workDayMinutes, List<ServiceType> supportedServiceTypes)
 	{
