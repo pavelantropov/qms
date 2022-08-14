@@ -74,11 +74,15 @@ public class Window
 		get => _currentVisitor;
 		set
 		{
+			if (_currentVisitor != null)
+			{
+				_currentVisitor.MinutesLeft = 0;
+			}
+
 			IsAvailable = false;
 			_currentVisitor = value;
-			MinutesLeft -= CurrentVisitor.ServiceType.MinutesRequired;
-			CurrentVisitor.VisitorLeftEvent += OnVisitorLeft;
-			CurrentVisitor.MinutesLeft = 0;
+			MinutesLeft -= _currentVisitor.ServiceType.MinutesRequired;
+			_currentVisitor.VisitorLeftEvent += OnVisitorLeft;
 		}
 	}
 
